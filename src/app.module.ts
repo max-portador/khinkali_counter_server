@@ -6,16 +6,27 @@ import { resolve } from 'path';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
+import { ConfigModule } from "@nestjs/config";
+import { APP_GUARD } from "@nestjs/core";
+import { AtGuard } from "./common/guards";
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     ServeStaticModule.forRoot({ rootPath: resolve(__dirname, 'static'), }),
-    MongooseModule.forRoot('mongodb+srv://hotdog:hotgirl@cluster0.rn7ft.mongodb.net/?retryWrites=true&w=majority'),
+    MongooseModule.forRoot(process.env.MONGO_URI),
     EventModule,
     UserModule,
     AuthModule,
   ],
   controllers: [AppController],
+  providers:[
+    {
+      provide: APP_GUARD,
+      useClass: AtGuard
+    }
+  ]
+
 
 })
 export class AppModule {}

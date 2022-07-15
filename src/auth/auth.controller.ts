@@ -3,17 +3,20 @@ import {AuthService} from "./auth.service";
 import {NewUserDTO} from "../user/dto/new-user.dto";
 import {IUserDetail} from "../user/user.service";
 import {ExistingUserDTO} from "../user/dto/existing-user.dto";
+import { Public } from "../common/decorators";
 
-@Controller('auth')
+@Controller()
 export class AuthController {
     constructor(private authService: AuthService) {}
 
-    @Post('/register')
+    @Public()
+    @Post('register')
     register(@Body() user: NewUserDTO): Promise<IUserDetail | string | null>{
         return this.authService.register(user);
     }
 
-    @Post('/login')
+    @Public()
+    @Post('login')
     @HttpCode(HttpStatus.OK)
     login(@Body() user: ExistingUserDTO): Promise<{ token: string } | null>{
         return this.authService.login(user);

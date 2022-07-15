@@ -16,7 +16,8 @@ import {Express} from "express";
 import {CreateEventDto} from "./dto/create-event.dto";
 import {Types} from "mongoose";
 import {v4} from 'uuid'
-import {JwtGuard} from "../auth/guards/jwt.guard";
+import {AtGuard} from "../common/guards/at.guard";
+import { Public } from "../common/decorators";
 
 
 @Controller("/events")
@@ -24,7 +25,6 @@ export class EventController{
     constructor(private eventService: EventService) {
     }
 
-    @UseGuards(JwtGuard)
     @Post()
     @UseInterceptors(FilesInterceptor('image'))
     uploadFile(@UploadedFiles() files: Express.Multer.File[],
@@ -36,12 +36,12 @@ export class EventController{
         return this.eventService.create(dto, image.buffer, imageName)
     }
 
+    @Public()
     @Get()
     getAll(){
         return this.eventService.getAll()
     }
 
-    @UseGuards(JwtGuard)
     @Put()
     @UseInterceptors(FilesInterceptor('image'))
     update(@UploadedFiles() files: Express.Multer.File[],
@@ -56,7 +56,6 @@ export class EventController{
         return this.eventService.update(dto, _id, image, imageName)
     }
 
-    @UseGuards(JwtGuard)
     @Delete(':id')
     delete(@Param('id') id: Types.ObjectId) {
         return this.eventService.delete(id)

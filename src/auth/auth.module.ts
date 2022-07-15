@@ -1,17 +1,13 @@
-import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
-import {UserModule} from "../user/user.module";
-import {JwtModule} from "@nestjs/jwt";
-import {JwtGuard} from "./guards/jwt.guard";
-import {JwtStrategy} from "./guards/jwt.strategy";
+import { Module } from "@nestjs/common";
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
+import { UserModule } from "../user/user.module";
+import { JwtModule } from "@nestjs/jwt";
+import { AtStrategy, RtStrategy } from "./strategies";
 
 @Module({
-  imports: [UserModule, JwtModule.registerAsync({useFactory: () => ({
-      secret: 'twitter',
-      signOptions: {expiresIn: '2h'}
-    })})],
+  imports: [UserModule, JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService, JwtGuard, JwtStrategy]
+  providers: [AuthService, AtStrategy, RtStrategy]
 })
 export class AuthModule {}
