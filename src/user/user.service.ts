@@ -12,6 +12,7 @@ export class UserService {
   _getUserDetail(user: UserDocument): IUserDetail {
     return {
       name: user.name,
+      id: user._id
     };
   }
 
@@ -19,10 +20,10 @@ export class UserService {
     return this.userModel.findOne({ email }).exec();
   }
 
-  async findById(id: string): Promise<IUserDetail | null> {
+  async findById(id: string): Promise<UserDocument | null> {
     const user = await this.userModel.findById(id).exec();
     if (!user) return null;
-    return this._getUserDetail(user);
+    return user;
   }
 
   async create(
@@ -41,4 +42,5 @@ export class UserService {
 
 export interface IUserDetail {
   name: string;
+  id: string
 }

@@ -11,6 +11,8 @@ export class User {
     email: string;
     @Prop({required: true})
     password: string;
+    @Prop({required: false, default: null})
+    rtHash: string | null
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
