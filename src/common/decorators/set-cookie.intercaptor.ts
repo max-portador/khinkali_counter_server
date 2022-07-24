@@ -11,6 +11,7 @@ export class SetCookieInterceptor  implements NestInterceptor {
     const res = ctx.getResponse()
 
     return next
+      // основной метод, куда повесили Interceptor (auth/login, auth/register, auth/refresh)
       .handle()
       .pipe(
       // используем метод map из RxJs, чтобы мутировать Response
