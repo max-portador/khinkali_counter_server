@@ -1,5 +1,6 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
 import { Observable, map } from "rxjs";
+import { Response as ResType} from 'express'
 import { AuthServiceData, UserDataATokenType } from "../../auth/types";
 
 @Injectable()
@@ -15,18 +16,20 @@ export class SetCookieInterceptor  implements NestInterceptor {
       .handle()
       .pipe(
       // используем метод map из RxJs, чтобы мутировать Response
-        map(data => {
-          // извлекаем refresh_token
-          const { refresh_token, ...filteredData } = data
-
-          // записываем его в куки
-          res.cookie("refreshToken", refresh_token, {
-            httpOnly: true,
-            maxAge: 30 * 24 * 3600 * 1000
-          });
-
-          return filteredData
-        })
+        map(data => putRtToCookie(res, data))
       );
   }
+}
+
+function putRtToCookie (res: ResType, data: AuthServiceData){
+  // извлекаем refresh_token
+  const { refresh_token, ...filteredData } = data
+
+  // записываем его в куки
+  res.cookie("refreshToken", refresh_token, {
+    httpOnly: true,
+    maxAge: 30 * 24 * 3600 * 1000
+  });
+
+  return filteredData
 }

@@ -1,9 +1,10 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
+import { verify } from 'jsonwebtoken'
 import { UserService } from "../user/user.service";
 import { ExistingUserDTO } from "../user/dto/existing-user.dto";
 import { JwtService } from "@nestjs/jwt";
-import { AuthServiceData, Tokens } from "./types";
+import { AuthServiceData, JWTPayload, Tokens } from "./types";
 import { NewUserDTO } from "../user/dto/new-user.dto";
 import { UserDocument } from "../user/user.schema";
 
@@ -48,8 +49,9 @@ export class AuthService {
       return true
   }
 
-  async refreshTokens(userId: string, rt: string ): Promise<AuthServiceData>{
-    const userFromDb = await this.userService.findById(userId)
+  async refreshTokens(rt: string ): Promise<AuthServiceData>{
+    const jwtPayload = verify(rt, process.env.RT_SECRET) as JWTPayload
+    const userFromDb = await this.userService.findById(jwtPayload.userId)
     if (!userFromDb || !userFromDb.rtHash)
       throw new ForbiddenException('Access Denied')
 
@@ -65,7 +67,7 @@ export class AuthService {
       { userId, email },
       {
         secret: process.env.AT_SECRET,
-        expiresIn: 30,
+        expiresIn: '30m',
       },
     );
 

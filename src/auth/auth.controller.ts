@@ -2,10 +2,9 @@ import { Body, Controller, HttpCode, HttpStatus, Post, Res, UseInterceptors } fr
 import { Response as ResponseType } from "express";
 import { AuthService } from "./auth.service";
 import { ExistingUserDTO } from "../user/dto/existing-user.dto";
-import { CookiesRt, GetUserId, Public } from "../common/decorators";
+import { CookiesRt, GetUserId, Public, SetCookieInterceptor } from "../common/decorators";
 import { AuthServiceData } from "./types";
 import { NewUserDTO } from "../user/dto/new-user.dto";
-import { SetCookieInterceptor } from "../common/decorators/set-cookie.intercaptor";
 
 @Controller("auth")
 export class AuthController {
@@ -37,6 +36,7 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   logout(@GetUserId() userId: string): Promise<boolean>{
+    console.log(userId)
     return this.authService.logout(userId)
   }
 
@@ -45,10 +45,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(SetCookieInterceptor)
   async refreshTokens(
-    @Res({ passthrough: true }) res: ResponseType,
-    @GetUserId() userId: string,
     @CookiesRt() rt: string
   ): Promise<AuthServiceData>{
-    return  await this.authService.refreshTokens(userId, rt)
+    return  await this.authService.refreshTokens(rt)
   }
 }

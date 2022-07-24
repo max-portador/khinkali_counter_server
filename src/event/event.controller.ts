@@ -1,26 +1,15 @@
-import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Post,
-    Put,
-    UploadedFiles,
-    UseGuards,
-    UseInterceptors
-} from "@nestjs/common";
-import {EventService} from "./event.service";
-import {FilesInterceptor} from "@nestjs/platform-express";
-import {Express} from "express";
-import {CreateEventDto} from "./dto/create-event.dto";
-import {Types} from "mongoose";
-import {v4} from 'uuid'
-import {AtGuard} from "../common/guards/at.guard";
+import { Body, Controller, Delete, Get, Param, Post, Put,
+    UploadedFiles, UseInterceptors } from "@nestjs/common";
+import { EventService } from "./event.service";
+import { FilesInterceptor } from "@nestjs/platform-express";
+import { Express } from "express";
+import { CreateEventDto } from "./dto/create-event.dto";
+import { Types } from "mongoose";
+import { v4 } from "uuid";
 import { Public } from "../common/decorators";
 
 
-@Controller("/events")
+@Controller("events")
 export class EventController{
     constructor(private eventService: EventService) {
     }
