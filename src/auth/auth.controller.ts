@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Res, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpStatus, Get, Post, Res, UseInterceptors } from "@nestjs/common";
 import { Response as ResponseType } from "express";
 import { AuthService } from "./auth.service";
 import { ExistingUserDTO } from "../user/dto/existing-user.dto";
@@ -41,7 +41,7 @@ export class AuthController {
   }
 
   @Public()
-  @Post('refresh')
+  @Get('refresh')
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(SetCookieInterceptor)
   async refreshTokens(
