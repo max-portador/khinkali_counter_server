@@ -1,11 +1,11 @@
 import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from "@nestjs/common";
-import { Observable, map } from "rxjs";
-import { Response as ResType} from 'express'
-import { AuthServiceData, UserDataATokenType } from "../../auth/types";
+import { map, Observable } from "rxjs";
+import { Response as ResType } from "express";
+import { AuthServiceData, ResponseWithCookies } from "../../auth/types";
 
 @Injectable()
 export class SetCookieInterceptor  implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler<AuthServiceData>): Observable<UserDataATokenType> {
+  intercept(context: ExecutionContext, next: CallHandler<AuthServiceData>): Observable<ResponseWithCookies> {
 
     // получаем объект Response, которому запишем куки
     const ctx = context.switchToHttp()
@@ -22,13 +22,18 @@ export class SetCookieInterceptor  implements NestInterceptor {
 }
 
 function putRtToCookie (res: ResType, data: AuthServiceData){
-  // извлекаем refresh_token
-  const { refresh_token, ...filteredData } = data
+  // извлекаем токены
+  const { refresh_token, access_token, ...filteredData } = data
 
-  // записываем его в куки
+  // записываем их в куки
   res.cookie("refreshToken", refresh_token, {
     httpOnly: true,
     maxAge: 30 * 24 * 3600 * 1000
+  });
+
+  res.cookie("accessToken", access_token, {
+    httpOnly: true,
+    maxAge: 5 * 60 * 1000
   });
 
   return filteredData

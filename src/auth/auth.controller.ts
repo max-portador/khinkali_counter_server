@@ -1,10 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Get, Post, Res, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpStatus, Get, Post, Res, UseInterceptors, Req } from "@nestjs/common";
 import { Response as ResponseType } from "express";
 import { AuthService } from "./auth.service";
 import { ExistingUserDTO } from "../user/dto/existing-user.dto";
 import { CookiesRt, GetUserId, Public, SetCookieInterceptor } from "../common/decorators";
 import { AuthServiceData } from "./types";
 import { NewUserDTO } from "../user/dto/new-user.dto";
+import { IUserDetail } from "../user/user.service";
 
 @Controller("auth")
 export class AuthController {
@@ -27,16 +28,15 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(SetCookieInterceptor)
   async login(
-    @Res({ passthrough: true }) res: ResponseType,
     @Body() existingUser: ExistingUserDTO
   ): Promise<AuthServiceData> {
       return await this.authService.login(existingUser);
   }
 
+  @Public()
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   logout(@GetUserId() userId: string): Promise<boolean>{
-    console.log(userId)
     return this.authService.logout(userId)
   }
 
@@ -48,5 +48,11 @@ export class AuthController {
     @CookiesRt() rt: string
   ): Promise<AuthServiceData>{
     return  await this.authService.refreshTokens(rt)
+  }
+
+  @Get('me')
+  @HttpCode(HttpStatus.OK)
+  async me(@Req() request): Promise<IUserDetail>{
+    return this.authService.me(request.user.email)
   }
 }

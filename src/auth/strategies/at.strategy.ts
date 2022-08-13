@@ -1,6 +1,7 @@
-import {Injectable} from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import {PassportStrategy} from "@nestjs/passport";
 import {ExtractJwt, Strategy} from "passport-jwt";
+import { Request as RequestType } from "express";
 
 type JWTPayload = {
     name: string;
@@ -13,12 +14,23 @@ type JWTPayload = {
 export class AtStrategy extends PassportStrategy(Strategy, 'jwt'){
     constructor() {
         super({
-            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            jwtFromRequest: ExtractJwt.fromExtractors([cookieJWTExtractor]),
             secretOrKey: process.env.AT_SECRET,
         });
     }
 
     async validate(payload: JWTPayload) {
-        return {... payload };
+            return payload
+    //     }
+    //     else return new UnauthorizedException();
     }
+}
+
+
+function cookieJWTExtractor(request:RequestType) {
+    let accessToken = request?.cookies["accessToken"];
+    if (!accessToken) {
+        return null;
+    }
+    return accessToken
 }

@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import { verify } from 'jsonwebtoken'
-import { UserService } from "../user/user.service";
+import { IUserDetail, UserService } from "../user/user.service";
 import { ExistingUserDTO } from "../user/dto/existing-user.dto";
 import { JwtService } from "@nestjs/jwt";
 import { AuthServiceData, JWTPayload, Tokens } from "./types";
@@ -61,6 +61,11 @@ export class AuthService {
 
     return await this.getUserDataAndTokens(userFromDb)
   }
+
+  async me(email: string): Promise<IUserDetail>{
+    const { id, name } = await this.userService.findByEmail(email)
+    return { id, name }
+}
 
   async getTokens(userId: number, email: string): Promise<Tokens> {
     const at = this.jwtService.signAsync(
