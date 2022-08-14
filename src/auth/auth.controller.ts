@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Get, Post, Res, UseInterceptors, Req } from "@nestjs/common";
+import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res, UseInterceptors } from "@nestjs/common";
 import { Response as ResponseType } from "express";
 import { AuthService } from "./auth.service";
 import { ExistingUserDTO } from "../user/dto/existing-user.dto";
@@ -36,12 +36,14 @@ export class AuthController {
   @Public()
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  logout(@GetUserId() userId: string): Promise<boolean>{
+  logout(@GetUserId() userId: string, @Res({passthrough: true}) res): Promise<boolean>{
+    res.cookie("refreshToken", 'logout')
+    res.cookie("accessToken", 'logout')
     return this.authService.logout(userId)
   }
 
   @Public()
-  @Get('refresh')
+  @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(SetCookieInterceptor)
   async refreshTokens(
@@ -50,7 +52,7 @@ export class AuthController {
     return  await this.authService.refreshTokens(rt)
   }
 
-  @Get('me')
+  @Post('me')
   @HttpCode(HttpStatus.OK)
   async me(@Req() request): Promise<IUserDetail>{
     return this.authService.me(request.user.email)
