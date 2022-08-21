@@ -16,6 +16,7 @@ export class EventService{
         const event = await this.khinkaliEventModel.create({
             ...dto, buffer, imageName
         })
+        await this.fileService.createFile(imageName, buffer)
 
         return {
             date: event.date,
