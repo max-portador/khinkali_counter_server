@@ -12,13 +12,14 @@ export class EventService{
     constructor(@InjectModel(KhinkaliEvent.name) private khinkaliEventModel:  Model<KhinkaliEventDocument>,
                 private readonly fileService: FileService) {}
 
-    async create(dto: CreateEventDto, buffer: Buffer, imageName: string): Promise<EventWithoutBuffer>{
+    async create(dto: CreateEventDto, buffer: Buffer, imageName: string): Promise<EventWithId>{
         const event = await this.khinkaliEventModel.create({
             ...dto, buffer, imageName
         })
         await this.fileService.createFile(imageName, buffer)
 
         return {
+            _id: event._id,
             date: event.date,
             amount: event.amount,
             imageName: event.imageName,
