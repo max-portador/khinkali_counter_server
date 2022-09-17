@@ -7,8 +7,13 @@ const PORT = process.env.PORT || 5555;
 
 async function start() {
   try {
-    const app = await NestFactory.create(AppModule)
-    app.enableCors()
+    const app = await NestFactory.create(AppModule,
+      {
+        cors: {
+          credentials: true,
+          origin:true,
+        }
+      });
     app.useGlobalPipes(new ValidationPipe());
     app.use(cookieParser());
     await app.listen(PORT, () =>
