@@ -12,6 +12,8 @@ async function start() {
         cors: {
           credentials: true,
           origin:true,
+          allowedHeaders: 'Content-Type,Content-Length, Authorization, Accept,X-Requested-With',
+          methods: 'PUT,POST,GET,DELETE,OPTIONS',
         }
       });
     app.useGlobalPipes(new ValidationPipe());
