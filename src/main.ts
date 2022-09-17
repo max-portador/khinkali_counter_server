@@ -11,7 +11,7 @@ async function start() {
       {
         cors: {
           credentials: true,
-          origin: '*'
+          origin: ['https://khinkali-counter.netlify.app'],
         }
       });
     app.useGlobalPipes(new ValidationPipe());
