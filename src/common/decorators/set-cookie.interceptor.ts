@@ -28,12 +28,14 @@ function putRtToCookie (res: ResType, data: AuthServiceData){
   // записываем их в куки
   res.cookie("refreshToken", refresh_token, {
     httpOnly: true,
-    maxAge: 30 * 24 * 3600 * 1000
+    maxAge: 30 * 24 * 3600 * 1000,
+    secure: true
   });
 
   res.cookie("accessToken", access_token, {
     httpOnly: true,
-    maxAge: 5 * 60 * 1000
+    maxAge: 5 * 60 * 1000,
+    secure: true
   });
 
   return filteredData
